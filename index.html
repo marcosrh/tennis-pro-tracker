@@ -144,7 +144,6 @@
 
         .btn-secondary {
             background-color: var(--accent);
-            margin-bottom: 10px;
         }
         .btn-secondary:active {
             background-color: #2563eb;
@@ -404,6 +403,15 @@
 
         <!-- VISTA 3: ESTADÍSTICAS -->
         <div id="tab-stats" class="tab-content">
+            <div class="card">
+                <h2>Sincronización y Copias</h2>
+                <div class="row">
+                    <button type="button" class="btn-secondary" onclick="exportData()">📥 Exportar Datos (Backup)</button>
+                    <button type="button" onclick="document.getElementById('importFile').click()" style="background-color: #059669;">📤 Importar Datos</button>
+                    <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)">
+                </div>
+            </div>
+
             <div class="stats-grid">
                 <div class="stat-box">
                     <h3 id="statTotal">0</h3>
@@ -469,7 +477,7 @@
                 <div class="row">
                     <div class="form-group">
                         <label>Fortalezas</label>
-                        <textarea id="rStrengths" rows="2" placeholder="Ej: Muy luchador, buen nivel físico..."></textarea>
+                        <textarea id="rStrengths" rows="2" placeholder="Ej: Muy luchador, gran nivel físico..."></textarea>
                     </div>
                     <div class="form-group">
                         <label>Debilidades Detectadas</label>
@@ -523,8 +531,6 @@
 
     <script>
         let records = JSON.parse(localStorage.getItem('tennis_records')) || [];
-        
-        // Base de datos de rivales inicializada con Helder Monteiro Afonso
         let rivals = JSON.parse(localStorage.getItem('tennis_rivals')) || [
             {
                 id: 1,
@@ -641,6 +647,47 @@
             `;
         }
 
+        // --- EXPORTAR E IMPORTAR DATOS (SINCRONIZACIÓN MANUAL) ---
+        function exportData() {
+            const backup = {
+                records: records,
+                rivals: rivals,
+                exportDate: new Date().toISOString()
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `tennis_backup_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importData(event) {
+            const fileReader = new FileReader();
+            if(event.target.files[0]) {
+                fileReader.readAsText(event.target.files[0], "UTF-8");
+                fileReader.onload = function(e) {
+                    try {
+                        const parsed = JSON.parse(e.target.result);
+                        if(parsed.records && parsed.rivals) {
+                            records = parsed.records;
+                            rivals = parsed.rivals;
+                            localStorage.setItem('tennis_records', JSON.stringify(records));
+                            localStorage.setItem('tennis_rivals', JSON.stringify(rivals));
+                            alert('¡Datos importados y sincronizados correctamente!');
+                            calculateStats();
+                            renderRivals();
+                        } else {
+                            alert('El archivo no tiene un formato válido.');
+                        }
+                    } catch(err) {
+                        alert('Error al leer el archivo de copia de seguridad.');
+                    }
+                };
+            }
+        }
+
         // --- GESTIÓN DE RIVALES Y ESTADÍSTICAS CRUZADAS ---
         function openNewRivalModal() {
             document.getElementById('rivalId').value = '';
@@ -713,7 +760,6 @@
             }
 
             container.innerHTML = filtered.map(r => {
-                // Cruzar datos con el historial de partidos para calcular estadísticas contra este jugador
                 const matchesAgainst = records.filter(rec => rec.sessionType === 'Partido' && rec.rivalName.toLowerCase() === r.name.toLowerCase());
                 const totalPlayed = matchesAgainst.length;
                 const wins = matchesAgainst.filter(rec => rec.matchWon === 'Sí').length;
@@ -730,7 +776,6 @@
                             <button type="button" onclick="editRival(${r.id})" style="width:auto; padding:4px 8px; font-size:0.75rem; background:var(--accent);">✏️ Editar</button>
                         </div>
 
-                        <!-- Estadísticas Cruzadas -->
                         <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--primary); border-radius: 6px; padding: 8px; margin: 10px 0; font-size: 0.85rem;">
                             📊 <b>Estadísticas H2H:</b> ${totalPlayed} partidos jugados (${wins} Victorias - ${losses} Derrotas | ${winRate}% Eficiencia)
                         </div>
@@ -747,7 +792,6 @@
             }).join('');
         }
 
-        // Cargar vista inicial de rivales si se abre directamente
         renderRivals();
     </script>
 </body>
