@@ -149,6 +149,13 @@
             background-color: #2563eb;
         }
 
+        .btn-danger {
+            background-color: var(--danger);
+        }
+        .btn-danger:active {
+            background-color: #dc2626;
+        }
+
         .nav-bar {
             position: fixed;
             bottom: 0;
@@ -270,8 +277,9 @@
         <!-- VISTA 1: REGISTRAR -->
         <div id="tab-record" class="tab-content active">
             <div class="card">
-                <h2>Nuevo Registro</h2>
+                <h2 id="formTitle">Nuevo Registro</h2>
                 <form id="recordForm" onsubmit="saveRecord(event)">
+                    <input type="hidden" id="recordId">
                     <div class="form-group">
                         <label>Tipo de Sesión</label>
                         <select id="sessionType" onchange="toggleMatchFields()">
@@ -305,7 +313,7 @@
 
                         <div class="form-group">
                             <label>Rival(es)</label>
-                            <input type="text" id="rivalName" placeholder="Ej: Helder Monteiro Afonso" required>
+                            <input type="text" id="rivalName" placeholder="Ej: Helder Monteiro Afonso">
                         </div>
 
                         <div class="form-group">
@@ -388,7 +396,10 @@
                         <textarea id="notes" rows="3" placeholder="Ej: Helder aprieta en el revés, buscar errores con su derecha..."></textarea>
                     </div>
 
-                    <button type="submit">Guardar Sesión</button>
+                    <div class="row" style="margin-top: 10px;">
+                        <button type="button" id="cancelEditBtn" onclick="resetForm()" style="display:none; background-color:var(--border);">Cancelar</button>
+                        <button type="submit" id="submitBtn">Guardar Sesión</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -578,10 +589,11 @@
 
         function saveRecord(e) {
             e.preventDefault();
+            const id = document.getElementById('recordId').value;
             const sessionType = document.getElementById('sessionType').value;
             
-            const newRecord = {
-                id: Date.now(),
+            const recordData = {
+                id: id ? Number(id) : Date.now(),
                 sessionType,
                 matchCategory: sessionType === 'Partido' ? document.getElementById('matchCategory').value : 'Entrenamiento',
                 modality: sessionType === 'Partido' ? document.getElementById('modality').value : '-',
@@ -602,11 +614,75 @@
                 notes: document.getElementById('notes').value
             };
 
-            records.unshift(newRecord);
+            if(id) {
+                const index = records.findIndex(item => item.id === Number(id));
+                if(index !== -1) records[index] = recordData;
+                alert('¡Registro actualizado correctamente!');
+            } else {
+                records.unshift(recordData);
+                alert('¡Sesión guardada correctamente!');
+            }
+
             localStorage.setItem('tennis_records', JSON.stringify(records));
-            alert('¡Sesión guardada correctamente!');
+            resetForm();
+        }
+
+        function editRecord(id) {
+            const r = records.find(item => item.id === id);
+            if(!r) return;
+
+            document.getElementById('recordId').value = r.id;
+            document.getElementById('sessionType').value = r.sessionType;
+            toggleMatchFields();
+
+            if(r.sessionType === 'Partido') {
+                document.getElementById('matchCategory').value = r.matchCategory || 'Torneo';
+                document.getElementById('modality').value = r.modality || 'Individual';
+                toggleModalityFields();
+                document.getElementById('partner').value = r.partner || '';
+                document.getElementById('rivalName').value = r.rivalName || '';
+                document.getElementById('resultScore').value = r.resultScore || '';
+                document.getElementById('matchWon').value = r.matchWon || 'Sí';
+            }
+
+            document.getElementById('date').value = r.date;
+            document.getElementById('time').value = r.time;
+            document.getElementById('location').value = r.location || '';
+            document.getElementById('weather').value = r.weather || '';
+            document.getElementById('surface').value = r.surface || 'Tierra Batida';
+            document.getElementById('ballType').value = r.ballType || '';
+            document.getElementById('racket').value = r.racket || '';
+            document.getElementById('duration').value = r.duration || '';
+            document.getElementById('avgHeartRate').value = r.avgHeartRate || '';
+            document.getElementById('calories').value = r.calories || '';
+            document.getElementById('notes').value = r.notes || '';
+
+            document.getElementById('formTitle').innerText = 'Editar Registro';
+            document.getElementById('submitBtn').innerText = 'Actualizar Sesión';
+            document.getElementById('cancelEditBtn').style.display = 'block';
+
+            // Cambiar a la pestaña de registro
+            switchTab('record', document.querySelector('.nav-bar button:first-child'));
+        }
+
+        function deleteRecord(id) {
+            if(confirm('¿Estás seguro de que deseas eliminar este registro?')) {
+                records = records.filter(item => item.id !== id);
+                localStorage.setItem('tennis_records', JSON.stringify(records));
+                renderHistory();
+            }
+        }
+
+        function resetForm() {
             document.getElementById('recordForm').reset();
+            document.getElementById('recordId').value = '';
+            document.getElementById('formTitle').innerText = 'Nuevo Registro';
+            document.getElementById('submitBtn').innerText = 'Guardar Sesión';
+            document.getElementById('cancelEditBtn').style.display = 'none';
             document.getElementById('date').valueAsDate = new Date();
+            const currentTime = new Date();
+            document.getElementById('time').value = `${String(currentTime.getHours()).padStart(2, '0')}:${String(currentTime.getMinutes()).padStart(2, '0')}`;
+            toggleMatchFields();
         }
 
         function renderHistory() {
@@ -618,8 +694,16 @@
 
             container.innerHTML = records.map(r => `
                 <div class="item-card ${r.sessionType === 'Entrenamiento' ? 'training' : ''}">
-                    <span class="badge ${r.sessionType === 'Entrenamiento' ? 'training' : ''}">${r.sessionType === 'Partido' ? r.matchCategory : 'Entrenamiento'}</span>
-                    <strong>${r.sessionType === 'Partido' ? 'vs ' + r.rivalName : 'Sesión de Entreno'}</strong>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <div>
+                            <span class="badge ${r.sessionType === 'Entrenamiento' ? 'training' : ''}">${r.sessionType === 'Partido' ? r.matchCategory : 'Entrenamiento'}</span>
+                            <strong>${r.sessionType === 'Partido' ? 'vs ' + r.rivalName : 'Sesión de Entreno'}</strong>
+                        </div>
+                        <div style="display:flex; gap:6px;">
+                            <button type="button" onclick="editRecord(${r.id})" style="width:auto; padding:4px 8px; font-size:0.75rem; background:var(--accent);">✏️ Editar</button>
+                            <button type="button" onclick="deleteRecord(${r.id})" style="width:auto; padding:4px 8px; font-size:0.75rem;" class="btn-danger">🗑️</button>
+                        </div>
+                    </div>
                     <p style="font-size:0.85rem; margin: 4px 0;">📅 ${r.date} (${r.time}) | 📍 <a href="https://maps.google.com/?q=${encodeURIComponent(r.location)}" target="_blank" style="color:var(--primary); text-decoration:underline;">${r.location || 'Ubicación no especificada'}</a></p>
                     <p style="font-size:0.85rem; color:var(--primary);">🏆 Marcador: ${r.resultScore} ${r.sessionType === 'Partido' ? '(' + (r.matchWon === 'Sí' ? '✅ Victoria' : '❌ Derrota') + ')' : ''}</p>
                     <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">⌚ Apple Watch: ${r.duration} mins | 💓 ${r.avgHeartRate} bpm | 🔥 ${r.calories} kcal | ⛅ ${r.weather || 'N/D'}</p>
@@ -647,7 +731,6 @@
             `;
         }
 
-        // --- EXPORTAR E IMPORTAR DATOS (SINCRONIZACIÓN MANUAL) ---
         function exportData() {
             const backup = {
                 records: records,
@@ -688,7 +771,6 @@
             }
         }
 
-        // --- GESTIÓN DE RIVALES Y ESTADÍSTICAS CRUZADAS ---
         function openNewRivalModal() {
             document.getElementById('rivalId').value = '';
             document.getElementById('rivalForm').reset();
