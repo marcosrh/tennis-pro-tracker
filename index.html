@@ -9,7 +9,6 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='240' fill='%23ccff00' stroke='%2388aa00' stroke-width='16'/%3E%3Cpath d='M76 130c70 80 70 192 0 272M436 130c-70 80-70 192 0 272' fill='none' stroke='%23ffffff' stroke-width='22' stroke-linecap='round'/%3E%3C/svg%3E">
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='240' fill='%23ccff00' stroke='%2388aa00' stroke-width='16'/%3E%3Cpath d='M76 130c70 80 70 192 0 272M436 130c-70 80-70 192 0 272' fill='none' stroke='%23ffffff' stroke-width='22' stroke-linecap='round'/%3E%3C/svg%3E">
 
-    <!-- Configuración PWA para iPhone -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Tennis Tracker">
@@ -24,6 +23,7 @@
             --text-muted: #94a3b8;
             --border: #334155;
             --danger: #ef4444;
+            --accent: #3b82f6;
         }
 
         * {
@@ -87,7 +87,7 @@
             color: var(--primary);
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
         }
 
         .form-group {
@@ -140,6 +140,14 @@
 
         button:active {
             background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: var(--accent);
+            margin-bottom: 10px;
+        }
+        .btn-secondary:active {
+            background-color: #2563eb;
         }
 
         .nav-bar {
@@ -241,6 +249,14 @@
             margin-top: 4px;
             margin-bottom: 8px;
         }
+
+        .rival-ficha {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
     </style>
 </head>
 <body>
@@ -296,6 +312,14 @@
                         <div class="form-group">
                             <label>Resultado / Marcador</label>
                             <input type="text" id="resultScore" placeholder="Ej: 6-4, 3-6, 7-6">
+                        </div>
+
+                        <div class="form-group">
+                            <label>¿Ganaste el partido?</label>
+                            <select id="matchWon">
+                                <option value="Sí">Sí (Victoria)</option>
+                                <option value="No">No (Derrota)</option>
+                            </select>
                         </div>
                     </div>
 
@@ -407,20 +431,75 @@
         <!-- VISTA 4: FICHAS DE RIVALES -->
         <div id="tab-rivals" class="tab-content">
             <div class="card">
-                <h2>Ficha de Rivales</h2>
-                <div class="form-group">
+                <h2>Fichas de Rivales <button type="button" onclick="openNewRivalModal()" style="width: auto; padding: 6px 12px; font-size: 0.85rem;">+ Nuevo Rival</button></h2>
+                <div class="form-group" style="margin-top: 10px;">
                     <label>Buscar Rival</label>
-                    <input type="text" id="rivalSearch" placeholder="Ej: Helder Monteiro Afonso">
+                    <input type="text" id="rivalSearch" placeholder="Ej: Helder Monteiro Afonso" oninput="renderRivals()">
                 </div>
-                <div id="rivalsList">
-                    <div class="item-card">
-                        <strong>Helder Monteiro Afonso</strong>
-                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Jugador de perfil sólido, defensivo. Muy luchador y con buen nivel físico. Comete más errores con la derecha que con el revés. Segundo saque muy atacable.</p>
-                    </div>
-                </div>
+                <div id="rivalsList"></div>
             </div>
         </div>
 
+    </div>
+
+    <!-- MODAL / FORMULARIO DE RIVAL -->
+    <div id="rivalModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.8); z-index:2000; padding:16px; overflow-y:auto;">
+        <div style="max-width:500px; margin:30px auto; background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:20px;">
+            <h2 id="modalTitle">Ficha de Rival</h2>
+            <form id="rivalForm" onsubmit="saveRival(event)">
+                <input type="hidden" id="rivalId">
+                <div class="form-group">
+                    <label>Nombre y Apellidos</label>
+                    <input type="text" id="rName" required placeholder="Ej: Helder Monteiro Afonso">
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Club</label>
+                        <input type="text" id="rClub" placeholder="Ej: Club Mercantil">
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha de Nacimiento</label>
+                        <input type="date" id="rBirthdate">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Perfil del Rival</label>
+                    <textarea id="rProfile" rows="2" placeholder="Ej: Jugador de perfil sólido, defensivo..."></textarea>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Fortalezas</label>
+                        <textarea id="rStrengths" rows="2" placeholder="Ej: Muy luchador, buen nivel físico..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Debilidades Detectadas</label>
+                        <textarea id="rWeaknesses" rows="2" placeholder="Ej: Comete más errores con la derecha, segundo saque atacable..."></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Patrón de Juego</label>
+                        <input type="text" id="rPattern" placeholder="Ej: Fondo de pista, contragolpeador">
+                    </div>
+                    <div class="form-group">
+                        <label>Mentalidad</label>
+                        <input type="text" id="rMentality" placeholder="Ej: Muy competitivo, no da bola por perdida">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Físico</label>
+                    <input type="text" id="rPhysical" placeholder="Ej: Alto nivel físico y resistencia">
+                </div>
+                <div class="form-group">
+                    <label>Estrategia: ¿Cómo jugarle?</label>
+                    <textarea id="rStrategy" rows="3" placeholder="Ej: Buscar su derecha, atacar su segundo saque al revés..."></textarea>
+                </div>
+                <div class="row">
+                    <button type="button" onclick="closeRivalModal()" style="background-color: var(--border);">Cancelar</button>
+                    <button type="submit">Guardar Ficha</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <nav class="nav-bar">
@@ -444,6 +523,23 @@
 
     <script>
         let records = JSON.parse(localStorage.getItem('tennis_records')) || [];
+        
+        // Base de datos de rivales inicializada con Helder Monteiro Afonso
+        let rivals = JSON.parse(localStorage.getItem('tennis_rivals')) || [
+            {
+                id: 1,
+                name: "Helder Monteiro Afonso",
+                club: "Club Mercantil",
+                birthdate: "1988-08-09",
+                profile: "Jugador de perfil sólido, defensivo. Muy luchador y con buen nivel físico. No da un partido por perdido nunca.",
+                strengths: "Muy luchador, gran fondo físico y consistencia.",
+                weaknesses: "Comete más errores con la derecha que con el revés. Segundo saque muy atacable.",
+                pattern: "Fondo de pista defensivo",
+                mentality: "Muy competitivo",
+                physical: "Excelente nivel físico",
+                strategy: "Atacar su segundo saque al revés y buscar errores forzados con su derecha."
+            }
+        ];
 
         document.getElementById('date').valueAsDate = new Date();
         const currentTime = new Date();
@@ -456,6 +552,7 @@
             btn.classList.add('active');
             if(tabId === 'history') renderHistory();
             if(tabId === 'stats') calculateStats();
+            if(tabId === 'rivals') renderRivals();
         }
 
         function toggleMatchFields() {
@@ -485,6 +582,7 @@
                 partner: document.getElementById('partner').value,
                 rivalName: sessionType === 'Partido' ? document.getElementById('rivalName').value : '-',
                 resultScore: document.getElementById('resultScore').value || '-',
+                matchWon: sessionType === 'Partido' ? document.getElementById('matchWon').value : '-',
                 date: document.getElementById('date').value,
                 time: document.getElementById('time').value,
                 location: document.getElementById('location').value,
@@ -517,7 +615,7 @@
                     <span class="badge ${r.sessionType === 'Entrenamiento' ? 'training' : ''}">${r.sessionType === 'Partido' ? r.matchCategory : 'Entrenamiento'}</span>
                     <strong>${r.sessionType === 'Partido' ? 'vs ' + r.rivalName : 'Sesión de Entreno'}</strong>
                     <p style="font-size:0.85rem; margin: 4px 0;">📅 ${r.date} (${r.time}) | 📍 <a href="https://maps.google.com/?q=${encodeURIComponent(r.location)}" target="_blank" style="color:var(--primary); text-decoration:underline;">${r.location || 'Ubicación no especificada'}</a></p>
-                    <p style="font-size:0.85rem; color:var(--primary);">🏆 Marcador: ${r.resultScore} | Superficie: ${r.surface} | Pelotas: ${r.ballType || 'N/D'}</p>
+                    <p style="font-size:0.85rem; color:var(--primary);">🏆 Marcador: ${r.resultScore} ${r.sessionType === 'Partido' ? '(' + (r.matchWon === 'Sí' ? '✅ Victoria' : '❌ Derrota') + ')' : ''}</p>
                     <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">⌚ Apple Watch: ${r.duration} mins | 💓 ${r.avgHeartRate} bpm | 🔥 ${r.calories} kcal | ⛅ ${r.weather || 'N/D'}</p>
                     ${r.notes ? '<p style="font-size:0.8rem; font-style:italic; margin-top:4px;">Notas: ' + r.notes + '</p>' : ''}
                 </div>
@@ -531,16 +629,126 @@
             const totalCalories = records.reduce((acc, curr) => acc + curr.calories, 0);
             const totalMinutes = records.reduce((acc, curr) => acc + curr.duration, 0);
             const matches = records.filter(r => r.sessionType === 'Partido');
+            const wins = matches.filter(r => r.matchWon === 'Sí').length;
 
             document.getElementById('statTotal').innerText = total;
             document.getElementById('statCalories').innerText = totalCalories;
             document.getElementById('statHours').innerText = (totalMinutes / 60).toFixed(1) + 'h';
-            document.getElementById('statWins').innerText = matches.length;
+            document.getElementById('statWins').innerText = matches.length > 0 ? `${Math.round((wins/matches.length)*100)}% Vic.` : '0%';
 
             document.getElementById('statsDetails').innerHTML = `
-                <b>Resumen analítico:</b> Llevas un total de ${total} registros guardados (${matches.length} partidos y ${total - matches.length} entrenamientos). Has invertido ${(totalMinutes / 60).toFixed(1)} horas en pista quemando ${totalCalories} kcal en total.
+                <b>Resumen analítico:</b> Llevas ${total} registros (${matches.length} partidos jugados con ${wins} victorias y ${matches.length - wins} derrotas). Has invertido ${(totalMinutes / 60).toFixed(1)} horas en pista quemando ${totalCalories} kcal.
             `;
         }
+
+        // --- GESTIÓN DE RIVALES Y ESTADÍSTICAS CRUZADAS ---
+        function openNewRivalModal() {
+            document.getElementById('rivalId').value = '';
+            document.getElementById('rivalForm').reset();
+            document.getElementById('modalTitle').innerText = 'Nuevo Rival';
+            document.getElementById('rivalModal').style.display = 'block';
+        }
+
+        function editRival(id) {
+            const r = rivals.find(item => item.id === id);
+            if(!r) return;
+            document.getElementById('rivalId').value = r.id;
+            document.getElementById('rName').value = r.name;
+            document.getElementById('rClub').value = r.club || '';
+            document.getElementById('rBirthdate').value = r.birthdate || '';
+            document.getElementById('rProfile').value = r.profile || '';
+            document.getElementById('rStrengths').value = r.strengths || '';
+            document.getElementById('rWeaknesses').value = r.weaknesses || '';
+            document.getElementById('rPattern').value = r.pattern || '';
+            document.getElementById('rMentality').value = r.mentality || '';
+            document.getElementById('rPhysical').value = r.physical || '';
+            document.getElementById('rStrategy').value = r.strategy || '';
+            document.getElementById('modalTitle').innerText = 'Editar Ficha de Rival';
+            document.getElementById('rivalModal').style.display = 'block';
+        }
+
+        function closeRivalModal() {
+            document.getElementById('rivalModal').style.display = 'none';
+        }
+
+        function saveRival(e) {
+            e.preventDefault();
+            const id = document.getElementById('rivalId').value;
+            const rivalData = {
+                id: id ? Number(id) : Date.now(),
+                name: document.getElementById('rName').value,
+                club: document.getElementById('rClub').value,
+                birthdate: document.getElementById('rBirthdate').value,
+                profile: document.getElementById('rProfile').value,
+                strengths: document.getElementById('rStrengths').value,
+                weaknesses: document.getElementById('rWeaknesses').value,
+                pattern: document.getElementById('rPattern').value,
+                mentality: document.getElementById('rMentality').value,
+                physical: document.getElementById('rPhysical').value,
+                strategy: document.getElementById('rStrategy').value
+            };
+
+            if(id) {
+                const index = rivals.findIndex(item => item.id === Number(id));
+                if(index !== -1) rivals[index] = rivalData;
+            } else {
+                rivals.push(rivalData);
+            }
+
+            localStorage.setItem('tennis_rivals', JSON.stringify(rivals));
+            closeRivalModal();
+            renderRivals();
+            alert('¡Ficha de rival guardada correctamente!');
+        }
+
+        function renderRivals() {
+            const container = document.getElementById('rivalsList');
+            const search = document.getElementById('rivalSearch').value.toLowerCase();
+            
+            const filtered = rivals.filter(r => r.name.toLowerCase().includes(search));
+
+            if(filtered.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px;">No se encontraron rivales.</p>';
+                return;
+            }
+
+            container.innerHTML = filtered.map(r => {
+                // Cruzar datos con el historial de partidos para calcular estadísticas contra este jugador
+                const matchesAgainst = records.filter(rec => rec.sessionType === 'Partido' && rec.rivalName.toLowerCase() === r.name.toLowerCase());
+                const totalPlayed = matchesAgainst.length;
+                const wins = matchesAgainst.filter(rec => rec.matchWon === 'Sí').length;
+                const losses = totalPlayed - wins;
+                const winRate = totalPlayed > 0 ? Math.round((wins / totalPlayed) * 100) : 0;
+
+                return `
+                    <div class="rival-ficha">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <div>
+                                <strong style="font-size:1.05rem; color:var(--primary);">${r.name}</strong>
+                                <p style="font-size:0.8rem; color:var(--text-muted);">🏢 Club: ${r.club || 'N/D'} | 🎂 F.Nac: ${r.birthdate || 'N/D'}</p>
+                            </div>
+                            <button type="button" onclick="editRival(${r.id})" style="width:auto; padding:4px 8px; font-size:0.75rem; background:var(--accent);">✏️ Editar</button>
+                        </div>
+
+                        <!-- Estadísticas Cruzadas -->
+                        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--primary); border-radius: 6px; padding: 8px; margin: 10px 0; font-size: 0.85rem;">
+                            📊 <b>Estadísticas H2H:</b> ${totalPlayed} partidos jugados (${wins} Victorias - ${losses} Derrotas | ${winRate}% Eficiencia)
+                        </div>
+
+                        <div style="font-size:0.85rem; margin-top:8px; display:grid; gap:4px;">
+                            <p><b>Perfil:</b> ${r.profile || 'Sin especificar'}</p>
+                            <p><b>Fortalezas:</b> ${r.strengths || 'Sin especificar'}</p>
+                            <p><b>Debilidades:</b> ${r.weaknesses || 'Sin especificar'}</p>
+                            <p><b>Patrón de juego:</b> ${r.pattern || 'N/D'} | <b>Mentalidad:</b> ${r.mentality || 'N/D'} | <b>Físico:</b> ${r.physical || 'N/D'}</p>
+                            <p style="color:#38bdf8; margin-top:4px;"><b>💡 Cómo jugarle:</b> ${r.strategy || 'Sin definir'}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Cargar vista inicial de rivales si se abre directamente
+        renderRivals();
     </script>
 </body>
 </html>
