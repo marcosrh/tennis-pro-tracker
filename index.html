@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tennis Pro Tracker - Marcos Riveiro (Mercantil)</title>
+    
+    <!-- Icono de pelota de tenis generado automáticamente para iOS y navegadores -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='240' fill='%23ccff00' stroke='%2388aa00' stroke-width='16'/%3E%3Cpath d='M76 130c70 80 70 192 0 272M436 130c-70 80-70 192 0 272' fill='none' stroke='%23ffffff' stroke-width='22' stroke-linecap='round'/%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='240' fill='%23ccff00' stroke='%2388aa00' stroke-width='16'/%3E%3Cpath d='M76 130c70 80 70 192 0 272M436 130c-70 80-70 192 0 272' fill='none' stroke='%23ffffff' stroke-width='22' stroke-linecap='round'/%3E%3C/svg%3E">
+
+    <!-- Configuración PWA para iPhone -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Tennis Tracker">
+
     <style>
         :root {
             --primary: #10b981;
@@ -491,4 +501,46 @@
             records.unshift(newRecord);
             localStorage.setItem('tennis_records', JSON.stringify(records));
             alert('¡Sesión guardada correctamente!');
-            document.getElementById('recordForm').reset
+            document.getElementById('recordForm').reset();
+            document.getElementById('date').valueAsDate = new Date();
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('historyList');
+            if(records.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px;">No hay registros todavía.</p>';
+                return;
+            }
+
+            container.innerHTML = records.map(r => `
+                <div class="item-card ${r.sessionType === 'Entrenamiento' ? 'training' : ''}">
+                    <span class="badge ${r.sessionType === 'Entrenamiento' ? 'training' : ''}">${r.sessionType === 'Partido' ? r.matchCategory : 'Entrenamiento'}</span>
+                    <strong>${r.sessionType === 'Partido' ? 'vs ' + r.rivalName : 'Sesión de Entreno'}</strong>
+                    <p style="font-size:0.85rem; margin: 4px 0;">📅 ${r.date} (${r.time}) | 📍 <a href="https://maps.google.com/?q=${encodeURIComponent(r.location)}" target="_blank" style="color:var(--primary); text-decoration:underline;">${r.location || 'Ubicación no especificada'}</a></p>
+                    <p style="font-size:0.85rem; color:var(--primary);">🏆 Marcador: ${r.resultScore} | Superficie: ${r.surface} | Pelotas: ${r.ballType || 'N/D'}</p>
+                    <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">⌚ Apple Watch: ${r.duration} mins | 💓 ${r.avgHeartRate} bpm | 🔥 ${r.calories} kcal | ⛅ ${r.weather || 'N/D'}</p>
+                    ${r.notes ? '<p style="font-size:0.8rem; font-style:italic; margin-top:4px;">Notas: ' + r.notes + '</p>' : ''}
+                </div>
+            `).join('');
+        }
+
+        function calculateStats() {
+            const total = records.length;
+            if(total === 0) return;
+
+            const totalCalories = records.reduce((acc, curr) => acc + curr.calories, 0);
+            const totalMinutes = records.reduce((acc, curr) => acc + curr.duration, 0);
+            const matches = records.filter(r => r.sessionType === 'Partido');
+
+            document.getElementById('statTotal').innerText = total;
+            document.getElementById('statCalories').innerText = totalCalories;
+            document.getElementById('statHours').innerText = (totalMinutes / 60).toFixed(1) + 'h';
+            document.getElementById('statWins').innerText = matches.length;
+
+            document.getElementById('statsDetails').innerHTML = `
+                <b>Resumen analítico:</b> Llevas un total de ${total} registros guardados (${matches.length} partidos y ${total - matches.length} entrenamientos). Has invertido ${(totalMinutes / 60).toFixed(1)} horas en pista quemando ${totalCalories} kcal en total.
+            `;
+        }
+    </script>
+</body>
+</html>
