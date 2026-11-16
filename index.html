@@ -250,8 +250,8 @@
                     <div class="form-group">
                         <label>Tipo de Sesión</label>
                         <select id="sessionType" onchange="toggleMatchFields()">
-                            <option value="match">Partido Oficial</option>
-                            <option value="training">Entrenamiento</option>
+                            <option value="Partido">Partido</option>
+                            <option value="Entrenamiento">Entrenamiento</option>
                         </select>
                     </div>
 
@@ -449,7 +449,7 @@
         }
 
         function toggleMatchFields() {
-            const isMatch = document.getElementById('sessionType').value === 'match';
+            const isMatch = document.getElementById('sessionType').value === 'Partido';
             document.getElementById('matchFields').style.display = isMatch ? 'block' : 'none';
         }
 
@@ -470,10 +470,10 @@
             const newRecord = {
                 id: Date.now(),
                 sessionType,
-                matchCategory: sessionType === 'match' ? document.getElementById('matchCategory').value : 'Entreno',
-                modality: sessionType === 'match' ? document.getElementById('modality').value : '-',
+                matchCategory: sessionType === 'Partido' ? document.getElementById('matchCategory').value : 'Entrenamiento',
+                modality: sessionType === 'Partido' ? document.getElementById('modality').value : '-',
                 partner: document.getElementById('partner').value,
-                rivalName: sessionType === 'match' ? document.getElementById('rivalName').value : '-',
+                rivalName: sessionType === 'Partido' ? document.getElementById('rivalName').value : '-',
                 resultScore: document.getElementById('resultScore').value || '-',
                 date: document.getElementById('date').value,
                 time: document.getElementById('time').value,
@@ -491,46 +491,4 @@
             records.unshift(newRecord);
             localStorage.setItem('tennis_records', JSON.stringify(records));
             alert('¡Sesión guardada correctamente!');
-            document.getElementById('recordForm').reset();
-            document.getElementById('date').valueAsDate = new Date();
-        }
-
-        function renderHistory() {
-            const container = document.getElementById('historyList');
-            if(records.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px;">No hay registros todavía.</p>';
-                return;
-            }
-
-            container.innerHTML = records.map(r => `
-                <div class="item-card ${r.sessionType === 'training' ? 'training' : ''}">
-                    <span class="badge ${r.sessionType === 'training' ? 'training' : ''}">${r.sessionType === 'match' ? r.matchCategory : 'Entrenamiento'}</span>
-                    <strong>${r.sessionType === 'match' ? 'vs ' + r.rivalName : 'Sesión de Entreno'}</strong>
-                    <p style="font-size:0.85rem; margin: 4px 0;">📅 ${r.date} (${r.time}) | 📍 <a href="https://maps.google.com/?q=${encodeURIComponent(r.location)}" target="_blank" style="color:var(--primary); text-decoration:underline;">${r.location || 'Ubicación no especificada'}</a></p>
-                    <p style="font-size:0.85rem; color:var(--primary);">🏆 Marcador: ${r.resultScore} | Superficie: ${r.surface} | Pelotas: ${r.ballType || 'N/D'}</p>
-                    <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">⌚ Apple Watch: ${r.duration} mins | 💓 ${r.avgHeartRate} bpm | 🔥 ${r.calories} kcal | ⛅ ${r.weather || 'N/D'}</p>
-                    ${r.notes ? '<p style="font-size:0.8rem; font-style:italic; margin-top:4px;">Notas: ' + r.notes + '</p>' : ''}
-                </div>
-            `).join('');
-        }
-
-        function calculateStats() {
-            const total = records.length;
-            if(total === 0) return;
-
-            const totalCalories = records.reduce((acc, curr) => acc + curr.calories, 0);
-            const totalMinutes = records.reduce((acc, curr) => acc + curr.duration, 0);
-            const matches = records.filter(r => r.sessionType === 'match');
-
-            document.getElementById('statTotal').innerText = total;
-            document.getElementById('statCalories').innerText = totalCalories;
-            document.getElementById('statHours').innerText = (totalMinutes / 60).toFixed(1) + 'h';
-            document.getElementById('statWins').innerText = matches.length;
-
-            document.getElementById('statsDetails').innerHTML = `
-                <b>Resumen analítico:</b> Llevas un total de ${total} registros guardados (${matches.length} partidos y ${total - matches.length} entrenamientos). Has invertido ${(totalMinutes / 60).toFixed(1)} horas en pista quemando ${totalCalories} kcal en total.
-            `;
-        }
-    </script>
-</body>
-</html>
+            document.getElementById('recordForm').reset
