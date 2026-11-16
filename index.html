@@ -1,547 +1,536 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="es">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2113.65">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-    span.s1 {font: 12.0px 'Apple Color Emoji'}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tennis Pro Tracker - Marcos Riveiro (Mercantil)</title>
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            padding-bottom: 90px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #065f46, #047857);
+            padding: 20px 16px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
+        }
+
+        header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 0.85rem;
+            color: #d1fae5;
+            margin-top: 4px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            background-color: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .row .form-group {
+            flex: 1;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:active {
+            background-color: var(--primary-dark);
+        }
+
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #1e293b;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+        }
+
+        .item-card {
+            background: rgba(15, 23, 42, 0.6);
+            border-left: 4px solid var(--primary);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .item-card.training {
+            border-left-color: #3b82f6;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .badge.training {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stat-box {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .stat-box h3 {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-box p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .weather-btn {
+            background: #334155;
+            font-size: 0.85rem;
+            padding: 6px;
+            margin-top: 4px;
+            margin-bottom: 8px;
+        }
+    </style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="es"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Tennis Pro Tracker - Marcos Riveiro (Mercantil)&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>:root {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--primary: #10b981;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--primary-dark: #059669;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--bg-dark: #0f172a;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--card-bg: #1e293b;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--text-main: #f8fafc;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--text-muted: #94a3b8;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--border: #334155;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--danger: #ef4444;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>* {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>box-sizing: border-box;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin: 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>-webkit-tap-highlight-color: transparent;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>body {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: var(--bg-dark);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: var(--text-main);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding-bottom: 90px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>header {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: linear-gradient(135deg, #065f46, #047857);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 20px 16px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>header h1 {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1.25rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-weight: 700;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>header p {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.85rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #d1fae5;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-top: 4px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.container {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>max-width: 600px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin: 0 auto;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 16px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.tab-content {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: none;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.tab-content.active {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: block;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.card {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: var(--card-bg);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border: 1px solid var(--border);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 16px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 16px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: 0 2px 4px rgba(0,0,0,0.2);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>h2 {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1.1rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: var(--primary);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>gap: 8px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.form-group {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>label {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: block;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.8rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: var(--text-muted);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 4px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>input, select, textarea {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #0f172a;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border: 1px solid var(--border);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 8px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: var(--text-main);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.95rem;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>input:focus, select:focus, textarea:focus {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>outline: none;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-color: var(--primary);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.row {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>gap: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.row .form-group {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>flex: 1;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>button {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: var(--primary);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: white;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border: none;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 8px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-weight: 600;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>cursor: pointer;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>transition: background 0.2s;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>button:active {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: var(--primary-dark);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.nav-bar {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>position: fixed;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>bottom: 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>left: 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>right: 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #1e293b;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-top: 1px solid var(--border);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>justify-content: space-around;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 10px 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>z-index: 1000;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.nav-item {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: none;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border: none;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: var(--text-muted);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.75rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>flex-direction: column;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>gap: 4px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>cursor: pointer;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>flex: 1;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.nav-item.active {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: var(--primary);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.nav-item svg {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 22px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>height: 22px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>fill: currentColor;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.item-card {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: rgba(15, 23, 42, 0.6);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-left: 4px solid var(--primary);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 8px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.9rem;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.item-card.training {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-left-color: #3b82f6;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.badge {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: inline-block;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 2px 8px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 4px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.75rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-weight: 600;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: rgba(16, 185, 129, 0.2);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: var(--primary);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 6px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.badge.training {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: rgba(59, 130, 246, 0.2);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #3b82f6;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.stats-grid {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: grid;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>grid-template-columns: repeat(2, 1fr);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>gap: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 16px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.stat-box {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: var(--card-bg);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border: 1px solid var(--border);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 14px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.stat-box h3 {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: var(--primary);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 4px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.stat-box p {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.75rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: var(--text-muted);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>text-transform: uppercase;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.weather-btn {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: #334155;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.85rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 6px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-top: 4px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 8px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;header&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h1&gt;<span class="s1">🎾</span> Tennis Pro Tracker&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;Marcos Riveiro • Club Mercantil&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/header&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="container"&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- VISTA 1: REGISTRAR --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="tab-record" class="tab-content active"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2&gt;Nuevo Registro&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;form id="recordForm" onsubmit="saveRecord(event)"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="form-group"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label&gt;Tipo de Sesión&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;select id="sessionType" onchange="toggleMatchFields()"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="match"&gt;Partido Oficial&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="training"&gt;Entrenamiento&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/select&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div id="matchFields"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="form-group"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;label&gt;Categoría del Partido&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;select id="matchCategory"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;option value="Torneo"&gt;Torneo&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;option value="Interclubes"&gt;Interclubes&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;option value="Partido entrenamiento"&gt;Partido entrenamiento&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/select&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="form-group"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;label&gt;Modalidad&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;select id="modality" onchange="toggleModalityFields()"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;option value="Individual"&gt;Individual&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;option value="Dobles"&gt;Dobles&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/select&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div id="doublesFields" style="display:none;" class="form-group"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;label&gt;Compañero (Dobles)&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;input type="text" id="partner" placeholder="Ej: Compañero del Mercantil"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="form-group"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;label&gt;Rival(es)&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;input type="text" id="rivalName" placeholder="Ej: Helder Monteiro Afonso" required&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="form-group"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;label&gt;Resultado / Marcador&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;input type="text" id="resultScore" placeholder="Ej: 6-4, 3-6, 7-6"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="row"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="form-group"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;label&gt;Fecha&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;input type="date" id="date" required&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="form-group"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;label&gt;Hora&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;input type="time" id="time" required&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="form-group"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label&gt;Lugar / Club (Google Maps)&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input type="text" id="location" placeholder="Ej: Club Mercantil, Pista 3"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="form-group"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label&gt;Climatología (Cruzada por Fecha/Hora/Lugar)&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;button type="button" class="weather-btn" onclick="fetchWeather()"&gt;<span class="s1">🌤️</span> Obtener Clima Automático&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input type="text" id="weather" placeholder="Ej: 19°C, Despejado, Viento leve"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="row"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="form-group"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;label&gt;Superficie&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;select id="surface"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;option value="Tierra Batida"&gt;Tierra Batida&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;option value="Dura (Greenset)"&gt;Dura (Greenset)&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;option value="Hierba"&gt;Hierba&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;option value="Sintética / Indoor"&gt;Sintética / Indoor&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/select&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="form-group"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;label&gt;Tipo de Pelotas&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;input type="text" id="ballType" placeholder="Ej: Dunlop Fort All Court"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="form-group" style="margin-top: 10px;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label&gt;Raqueta&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input type="text" id="racket" placeholder="Ej: Wilson Blade 98"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3 style="font-size:0.95rem; color:var(--primary); margin: 16px 0 8px;"&gt;<span class="s1">🍎</span> Datos Biométricos (Apple Watch)&lt;/h3&gt;</p>
-<p class="p2"><span class="Apple-converted-space">                    </span></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="row"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="form-group"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;label&gt;Duración (minutos)&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;input type="number" id="duration" placeholder="Ej: 90"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="form-group"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;label&gt;FC Media (BPM)&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;input type="number" id="avgHeartRate" placeholder="Ej: 152"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="form-group"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label&gt;Calorías Activas (kcal)&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input type="number" id="calories" placeholder="Ej: 820"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="form-group"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label&gt;Notas Tácticas / Sensaciones&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;textarea id="notes" rows="3" placeholder="Ej: Helder aprieta en el revés, buscar errores con su derecha..."&gt;&lt;/textarea&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button type="submit"&gt;Guardar Sesión&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/form&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- VISTA 2: HISTORIAL --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="tab-history" class="tab-content"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2&gt;Historial de Actividad&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="historyList"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- VISTA 3: ESTADÍSTICAS --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="tab-stats" class="tab-content"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="stats-grid"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="stat-box"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3 id="statTotal"&gt;0&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;Sesiones Totales&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="stat-box"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3 id="statWins"&gt;0&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;Partidos / Entrenos&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="stat-box"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3 id="statCalories"&gt;0&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;Kcal Totales&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="stat-box"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3 id="statHours"&gt;0h&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;Tiempo en Pista&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2&gt;Resumen de Rendimiento&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;p id="statsDetails" style="font-size: 0.9rem; color: var(--text-muted);"&gt;Registra partidos y entrenos para ver análisis detallados de superficies, rivales y métricas de tu Apple Watch.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- VISTA 4: FICHAS DE RIVALES --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="tab-rivals" class="tab-content"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2&gt;Ficha de Rivales&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;label&gt;Buscar Rival&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="text" id="rivalSearch" placeholder="Ej: Helder Monteiro Afonso"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="rivalsList"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="item-card"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;strong&gt;Helder Monteiro Afonso&lt;/strong&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;"&gt;Jugador de perfil sólido, defensivo. Muy luchador y con buen nivel físico. Comete más errores con la derecha que con el revés. Segundo saque muy atacable.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;nav class="nav-bar"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="nav-item active" onclick="switchTab('record', this)"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;svg viewBox="0 0 24 24"&gt;&lt;path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2Z"/&gt;&lt;/svg&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>Registrar</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="nav-item" onclick="switchTab('history', this)"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;svg viewBox="0 0 24 24"&gt;&lt;path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9m-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12Z"/&gt;&lt;/svg&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>Historial</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="nav-item" onclick="switchTab('stats', this)"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;svg viewBox="0 0 24 24"&gt;&lt;path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"/&gt;&lt;/svg&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>Estadísticas</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="nav-item" onclick="switchTab('rivals', this)"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;svg viewBox="0 0 24 24"&gt;&lt;path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/&gt;&lt;/svg&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>Rivales</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/nav&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>let records = JSON.parse(localStorage.getItem('tennis_records')) || [];</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('date').valueAsDate = new Date();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const currentTime = new Date();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('time').value = `${String(currentTime.getHours()).padStart(2, '0')}:${String(currentTime.getMinutes()).padStart(2, '0')}`;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>function switchTab(tabId, btn) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.querySelectorAll('.tab-content').forEach(el =&gt; el.classList.remove('active'));</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.querySelectorAll('.nav-item').forEach(el =&gt; el.classList.remove('active'));</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('tab-' + tabId).classList.add('active');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>btn.classList.add('active');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(tabId === 'history') renderHistory();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(tabId === 'stats') calculateStats();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>function toggleMatchFields() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const isMatch = document.getElementById('sessionType').value === 'match';</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('matchFields').style.display = isMatch ? 'block' : 'none';</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>function toggleModalityFields() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const isDoubles = document.getElementById('modality').value === 'Dobles';</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('doublesFields').style.display = isDoubles ? 'block' : 'none';</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>function fetchWeather() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const location = document.getElementById('location').value || 'Círculo Mercantil de Vigo';</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('weather').value = `18°C, Parcialmente nublado, Viento suave (${location})`;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>function saveRecord(e) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>e.preventDefault();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const sessionType = document.getElementById('sessionType').value;</p>
-<p class="p2"><span class="Apple-converted-space">            </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>const newRecord = {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>id: Date.now(),</p>
-<p class="p1"><span class="Apple-converted-space">                </span>sessionType,</p>
-<p class="p1"><span class="Apple-converted-space">                </span>matchCategory: sessionType === 'match' ? document.getElementById('matchCategory').value : 'Entreno',</p>
-<p class="p1"><span class="Apple-converted-space">                </span>modality: sessionType === 'match' ? document.getElementById('modality').value : '-',</p>
-<p class="p1"><span class="Apple-converted-space">                </span>partner: document.getElementById('partner').value,</p>
-<p class="p1"><span class="Apple-converted-space">                </span>rivalName: sessionType === 'match' ? document.getElementById('rivalName').value : '-',</p>
-<p class="p1"><span class="Apple-converted-space">                </span>resultScore: document.getElementById('resultScore').value || '-',</p>
-<p class="p1"><span class="Apple-converted-space">                </span>date: document.getElementById('date').value,</p>
-<p class="p1"><span class="Apple-converted-space">                </span>time: document.getElementById('time').value,</p>
-<p class="p1"><span class="Apple-converted-space">                </span>location: document.getElementById('location').value,</p>
-<p class="p1"><span class="Apple-converted-space">                </span>weather: document.getElementById('weather').value,</p>
-<p class="p1"><span class="Apple-converted-space">                </span>surface: document.getElementById('surface').value,</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ballType: document.getElementById('ballType').value,</p>
-<p class="p1"><span class="Apple-converted-space">                </span>racket: document.getElementById('racket').value,</p>
-<p class="p1"><span class="Apple-converted-space">                </span>duration: Number(document.getElementById('duration').value) || 0,</p>
-<p class="p1"><span class="Apple-converted-space">                </span>avgHeartRate: Number(document.getElementById('avgHeartRate').value) || 0,</p>
-<p class="p1"><span class="Apple-converted-space">                </span>calories: Number(document.getElementById('calories').value) || 0,</p>
-<p class="p1"><span class="Apple-converted-space">                </span>notes: document.getElementById('notes').value</p>
-<p class="p1"><span class="Apple-converted-space">            </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>records.unshift(newRecord);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>localStorage.setItem('tennis_records', JSON.stringify(records));</p>
-<p class="p1"><span class="Apple-converted-space">            </span>alert('¡Sesión guardada correctamente!');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('recordForm').reset();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('date').valueAsDate = new Date();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>function renderHistory() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const container = document.getElementById('historyList');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(records.length === 0) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>container.innerHTML = '&lt;p style="color:var(--text-muted); text-align:center; padding:20px;"&gt;No hay registros todavía.&lt;/p&gt;';</p>
-<p class="p1"><span class="Apple-converted-space">                </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>container.innerHTML = records.map(r =&gt; `</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="item-card ${r.sessionType === 'training' ? 'training' : ''}"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span class="badge ${r.sessionType === 'training' ? 'training' : ''}"&gt;${r.sessionType === 'match' ? r.matchCategory : 'Entrenamiento'}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;strong&gt;${r.sessionType === 'match' ? 'vs ' + r.rivalName : 'Sesión de Entreno'}&lt;/strong&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p style="font-size:0.85rem; margin: 4px 0;"&gt;<span class="s1">📅</span> ${r.date} (${r.time}) | <span class="s1">📍</span> &lt;a href="https://maps.google.com/?q=${encodeURIComponent(r.location)}" target="_blank" style="color:var(--primary); text-decoration:underline;"&gt;${r.location || 'Ubicación no especificada'}&lt;/a&gt;&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p style="font-size:0.85rem; color:var(--primary);"&gt;<span class="s1">🏆</span> Marcador: ${r.resultScore} | Superficie: ${r.surface} | Pelotas: ${r.ballType || 'N/D'}&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;"&gt;<span class="s1">⌚</span> Apple Watch: ${r.duration} mins | <span class="s1">💓</span> ${r.avgHeartRate} bpm | <span class="s1">🔥</span> ${r.calories} kcal | <span class="s1">⛅</span> ${r.weather || 'N/D'}&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>${r.notes ? '&lt;p style="font-size:0.8rem; font-style:italic; margin-top:4px;"&gt;Notas: ' + r.notes + '&lt;/p&gt;' : ''}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>`).join('');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>function calculateStats() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const total = records.length;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(total === 0) return;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>const totalCalories = records.reduce((acc, curr) =&gt; acc + curr.calories, 0);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const totalMinutes = records.reduce((acc, curr) =&gt; acc + curr.duration, 0);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const matches = records.filter(r =&gt; r.sessionType === 'match');</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('statTotal').innerText = total;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('statCalories').innerText = totalCalories;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('statHours').innerText = (totalMinutes / 60).toFixed(1) + 'h';</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('statWins').innerText = matches.length;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('</p>
+
+    <header>
+        <h1>🎾 Tennis Pro Tracker</h1>
+        <p>Marcos Riveiro • Club Mercantil</p>
+    </header>
+
+    <div class="container">
+
+        <!-- VISTA 1: REGISTRAR -->
+        <div id="tab-record" class="tab-content active">
+            <div class="card">
+                <h2>Nuevo Registro</h2>
+                <form id="recordForm" onsubmit="saveRecord(event)">
+                    <div class="form-group">
+                        <label>Tipo de Sesión</label>
+                        <select id="sessionType" onchange="toggleMatchFields()">
+                            <option value="match">Partido Oficial</option>
+                            <option value="training">Entrenamiento</option>
+                        </select>
+                    </div>
+
+                    <div id="matchFields">
+                        <div class="form-group">
+                            <label>Categoría del Partido</label>
+                            <select id="matchCategory">
+                                <option value="Torneo">Torneo</option>
+                                <option value="Interclubes">Interclubes</option>
+                                <option value="Partido entrenamiento">Partido entrenamiento</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Modalidad</label>
+                            <select id="modality" onchange="toggleModalityFields()">
+                                <option value="Individual">Individual</option>
+                                <option value="Dobles">Dobles</option>
+                            </select>
+                        </div>
+
+                        <div id="doublesFields" style="display:none;" class="form-group">
+                            <label>Compañero (Dobles)</label>
+                            <input type="text" id="partner" placeholder="Ej: Compañero del Mercantil">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Rival(es)</label>
+                            <input type="text" id="rivalName" placeholder="Ej: Helder Monteiro Afonso" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Resultado / Marcador</label>
+                            <input type="text" id="resultScore" placeholder="Ej: 6-4, 3-6, 7-6">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Fecha</label>
+                            <input type="date" id="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Hora</label>
+                            <input type="time" id="time" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Lugar / Club (Google Maps)</label>
+                        <input type="text" id="location" placeholder="Ej: Club Mercantil, Pista 3">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Climatología (Cruzada por Fecha/Hora/Lugar)</label>
+                        <button type="button" class="weather-btn" onclick="fetchWeather()">🌤️ Obtener Clima Automático</button>
+                        <input type="text" id="weather" placeholder="Ej: 19°C, Despejado, Viento leve">
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Superficie</label>
+                            <select id="surface">
+                                <option value="Tierra Batida">Tierra Batida</option>
+                                <option value="Dura (Greenset)">Dura (Greenset)</option>
+                                <option value="Hierba">Hierba</option>
+                                <option value="Sintética / Indoor">Sintética / Indoor</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo de Pelotas</label>
+                            <input type="text" id="ballType" placeholder="Ej: Dunlop Fort All Court">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 10px;">
+                        <label>Raqueta</label>
+                        <input type="text" id="racket" placeholder="Ej: Wilson Blade 98">
+                    </div>
+
+                    <h3 style="font-size:0.95rem; color:var(--primary); margin: 16px 0 8px;">🍎 Datos Biométricos (Apple Watch)</h3>
+                    
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Duración (minutos)</label>
+                            <input type="number" id="duration" placeholder="Ej: 90">
+                        </div>
+                        <div class="form-group">
+                            <label>FC Media (BPM)</label>
+                            <input type="number" id="avgHeartRate" placeholder="Ej: 152">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Calorías Activas (kcal)</label>
+                        <input type="number" id="calories" placeholder="Ej: 820">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Notas Tácticas / Sensaciones</label>
+                        <textarea id="notes" rows="3" placeholder="Ej: Helder aprieta en el revés, buscar errores con su derecha..."></textarea>
+                    </div>
+
+                    <button type="submit">Guardar Sesión</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- VISTA 2: HISTORIAL -->
+        <div id="tab-history" class="tab-content">
+            <div class="card">
+                <h2>Historial de Actividad</h2>
+                <div id="historyList"></div>
+            </div>
+        </div>
+
+        <!-- VISTA 3: ESTADÍSTICAS -->
+        <div id="tab-stats" class="tab-content">
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <h3 id="statTotal">0</h3>
+                    <p>Sesiones Totales</p>
+                </div>
+                <div class="stat-box">
+                    <h3 id="statWins">0</h3>
+                    <p>Partidos / Entrenos</p>
+                </div>
+                <div class="stat-box">
+                    <h3 id="statCalories">0</h3>
+                    <p>Kcal Totales</p>
+                </div>
+                <div class="stat-box">
+                    <h3 id="statHours">0h</h3>
+                    <p>Tiempo en Pista</p>
+                </div>
+            </div>
+            <div class="card">
+                <h2>Resumen de Rendimiento</h2>
+                <p id="statsDetails" style="font-size: 0.9rem; color: var(--text-muted);">Registra partidos y entrenos para ver análisis detallados de superficies, rivales y métricas de tu Apple Watch.</p>
+            </div>
+        </div>
+
+        <!-- VISTA 4: FICHAS DE RIVALES -->
+        <div id="tab-rivals" class="tab-content">
+            <div class="card">
+                <h2>Ficha de Rivales</h2>
+                <div class="form-group">
+                    <label>Buscar Rival</label>
+                    <input type="text" id="rivalSearch" placeholder="Ej: Helder Monteiro Afonso">
+                </div>
+                <div id="rivalsList">
+                    <div class="item-card">
+                        <strong>Helder Monteiro Afonso</strong>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Jugador de perfil sólido, defensivo. Muy luchador y con buen nivel físico. Comete más errores con la derecha que con el revés. Segundo saque muy atacable.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <nav class="nav-bar">
+        <button class="nav-item active" onclick="switchTab('record', this)">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2Z"/></svg>
+            Registrar
+        </button>
+        <button class="nav-item" onclick="switchTab('history', this)">
+            <svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9m-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12Z"/></svg>
+            Historial
+        </button>
+        <button class="nav-item" onclick="switchTab('stats', this)">
+            <svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"/></svg>
+            Estadísticas
+        </button>
+        <button class="nav-item" onclick="switchTab('rivals', this)">
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            Rivales
+        </button>
+    </nav>
+
+    <script>
+        let records = JSON.parse(localStorage.getItem('tennis_records')) || [];
+
+        document.getElementById('date').valueAsDate = new Date();
+        const currentTime = new Date();
+        document.getElementById('time').value = `${String(currentTime.getHours()).padStart(2, '0')}:${String(currentTime.getMinutes()).padStart(2, '0')}`;
+
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            btn.classList.add('active');
+            if(tabId === 'history') renderHistory();
+            if(tabId === 'stats') calculateStats();
+        }
+
+        function toggleMatchFields() {
+            const isMatch = document.getElementById('sessionType').value === 'match';
+            document.getElementById('matchFields').style.display = isMatch ? 'block' : 'none';
+        }
+
+        function toggleModalityFields() {
+            const isDoubles = document.getElementById('modality').value === 'Dobles';
+            document.getElementById('doublesFields').style.display = isDoubles ? 'block' : 'none';
+        }
+
+        function fetchWeather() {
+            const location = document.getElementById('location').value || 'Círculo Mercantil de Vigo';
+            document.getElementById('weather').value = `18°C, Parcialmente nublado, Viento suave (${location})`;
+        }
+
+        function saveRecord(e) {
+            e.preventDefault();
+            const sessionType = document.getElementById('sessionType').value;
+            
+            const newRecord = {
+                id: Date.now(),
+                sessionType,
+                matchCategory: sessionType === 'match' ? document.getElementById('matchCategory').value : 'Entreno',
+                modality: sessionType === 'match' ? document.getElementById('modality').value : '-',
+                partner: document.getElementById('partner').value,
+                rivalName: sessionType === 'match' ? document.getElementById('rivalName').value : '-',
+                resultScore: document.getElementById('resultScore').value || '-',
+                date: document.getElementById('date').value,
+                time: document.getElementById('time').value,
+                location: document.getElementById('location').value,
+                weather: document.getElementById('weather').value,
+                surface: document.getElementById('surface').value,
+                ballType: document.getElementById('ballType').value,
+                racket: document.getElementById('racket').value,
+                duration: Number(document.getElementById('duration').value) || 0,
+                avgHeartRate: Number(document.getElementById('avgHeartRate').value) || 0,
+                calories: Number(document.getElementById('calories').value) || 0,
+                notes: document.getElementById('notes').value
+            };
+
+            records.unshift(newRecord);
+            localStorage.setItem('tennis_records', JSON.stringify(records));
+            alert('¡Sesión guardada correctamente!');
+            document.getElementById('recordForm').reset();
+            document.getElementById('date').valueAsDate = new Date();
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('historyList');
+            if(records.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px;">No hay registros todavía.</p>';
+                return;
+            }
+
+            container.innerHTML = records.map(r => `
+                <div class="item-card ${r.sessionType === 'training' ? 'training' : ''}">
+                    <span class="badge ${r.sessionType === 'training' ? 'training' : ''}">${r.sessionType === 'match' ? r.matchCategory : 'Entrenamiento'}</span>
+                    <strong>${r.sessionType === 'match' ? 'vs ' + r.rivalName : 'Sesión de Entreno'}</strong>
+                    <p style="font-size:0.85rem; margin: 4px 0;">📅 ${r.date} (${r.time}) | 📍 <a href="https://maps.google.com/?q=${encodeURIComponent(r.location)}" target="_blank" style="color:var(--primary); text-decoration:underline;">${r.location || 'Ubicación no especificada'}</a></p>
+                    <p style="font-size:0.85rem; color:var(--primary);">🏆 Marcador: ${r.resultScore} | Superficie: ${r.surface} | Pelotas: ${r.ballType || 'N/D'}</p>
+                    <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">⌚ Apple Watch: ${r.duration} mins | 💓 ${r.avgHeartRate} bpm | 🔥 ${r.calories} kcal | ⛅ ${r.weather || 'N/D'}</p>
+                    ${r.notes ? '<p style="font-size:0.8rem; font-style:italic; margin-top:4px;">Notas: ' + r.notes + '</p>' : ''}
+                </div>
+            `).join('');
+        }
+
+        function calculateStats() {
+            const total = records.length;
+            if(total === 0) return;
+
+            const totalCalories = records.reduce((acc, curr) => acc + curr.calories, 0);
+            const totalMinutes = records.reduce((acc, curr) => acc + curr.duration, 0);
+            const matches = records.filter(r => r.sessionType === 'match');
+
+            document.getElementById('statTotal').innerText = total;
+            document.getElementById('statCalories').innerText = totalCalories;
+            document.getElementById('statHours').innerText = (totalMinutes / 60).toFixed(1) + 'h';
+            document.getElementById('statWins').innerText = matches.length;
+
+            document.getElementById('statsDetails').innerHTML = `
+                <b>Resumen analítico:</b> Llevas un total de ${total} registros guardados (${matches.length} partidos y ${total - matches.length} entrenamientos). Has invertido ${(totalMinutes / 60).toFixed(1)} horas en pista quemando ${totalCalories} kcal en total.
+            `;
+        }
+    </script>
 </body>
 </html>
